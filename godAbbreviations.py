@@ -147,11 +147,11 @@ def godAbbreviations(godName):
 
     return godName
 
-if __name__ == '__main__':
-
-    name = "nu wa"
-    fixedName = godAbbreviations(name)
-    print(fixedName)
+# if __name__ == '__main__':
+#
+#     name = "nu wa"
+#     fixedName = godAbbreviations(name)
+#     print(fixedName)
 
 
 

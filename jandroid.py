@@ -186,5 +186,5 @@ if __name__ == '__main__':
         if message.content.startswith("$ban"):
             await message.channel.send("Priveledges have been revoked from Bean Bean #5753")
 
-
+#test
     client.run(token)
