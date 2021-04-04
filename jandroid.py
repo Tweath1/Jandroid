@@ -1,23 +1,40 @@
 import discord
 import requests
 from bs4 import BeautifulSoup
-import math
-from godAbbreviations import godAbbreviations
+from godFunctions import godAbbreviations
 
 with open('token.txt', 'r') as file:
-  token = file.readline()
+    token = file.readline()
+
+
+def split_by_char(string):
+  charList = []
+  for char in string:
+    charList.append(char)
+  return charList
 
 
 def createItemBuildEmbed(godName, itemString):
+    prettyGodName = ""
+    prettyGodNameList = godName.split("-")
+    for index in range(len(prettyGodNameList)):
+        prettyGodNameList[index] = prettyGodNameList[index].capitalize()
+    for item in prettyGodNameList:
+        prettyGodName = prettyGodName + item + " "
     embedVar = discord.Embed(color=0x7fffd4)
-    #print("https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
     embedVar.set_thumbnail(url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
-    embedVar.set_author(name=godName, url="https://smite.guru/builds/{}".format(godName), icon_url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
+    embedVar.set_author(name=prettyGodName, url="https://smite.guru/builds/{}".format(godName), icon_url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
     embedVar.add_field(name="Here are the 6 most popular items for {}".format(godName), value=itemString, inline=True)
     return embedVar
 
 
 def createGuidedBuildEmbed(godName, itemList, percentageList):
+    prettyGodName = ""
+    prettyGodNameList = godName.split("-")
+    for index in range(len(prettyGodNameList)):
+        prettyGodNameList[index] = prettyGodNameList[index].capitalize()
+    for item in prettyGodNameList:
+        prettyGodName = prettyGodName + item + " "
     embedVar = discord.Embed(color=0x7fffd4)
     starterList = [itemList[0], itemList[1], itemList[2]]
     bootsList = [itemList[3], itemList[4], itemList[5]]
@@ -31,16 +48,9 @@ def createGuidedBuildEmbed(godName, itemList, percentageList):
         if relicList[index] == "Vision Shard":
             relicList.pop(index)
             relicPercentageList.pop(index)
-    print(starterList)
-    print(bootsList)
-    print(relicList)
-    print(coreItemsList)
-    print(starterPercentageList)
-    print(bootsPercentageList)
-    print(relicPercentageList)
-    print(coreItemsPercentageList)
+
     embedVar.set_thumbnail(url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
-    embedVar.set_author(name=godName, url="https://smite.guru/builds/{}".format(godName), icon_url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
+    embedVar.set_author(name=prettyGodName, url="https://smite.guru/builds/{}".format(godName), icon_url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
     embedVar.add_field(name="Popular Blessings", value=starterList[0] + ": " + starterPercentageList[0] + "\n"
                        + starterList[1] + ": " + starterPercentageList[1] + "\n"
                        + starterList[2] + ": " + starterPercentageList[2],
@@ -52,7 +62,7 @@ def createGuidedBuildEmbed(godName, itemList, percentageList):
     embedVar.add_field(name="Popular Relics", value=relicList[0] + ": " + relicPercentageList[0] + "\n"
                        + relicList[1] + ": " + relicPercentageList[1] + "\n"
                        + relicList[2] + ": " + relicPercentageList[2],
-                       inline=False)
+                       inline=True)
     embedVar.add_field(name="Popular Core Items", value=coreItemsList[0] + ": " + coreItemsPercentageList[0] + "\n"
                        + coreItemsList[1] + ": " + coreItemsPercentageList[1] + "\n"
                        + coreItemsList[2] + ": " + coreItemsPercentageList[2] + "\n"
@@ -78,6 +88,16 @@ def mathStuff(equation):
 
     return finalValue
 
+def pull_build(godName):
+    site_url = "http://smite.guru"
+    site_dir = "/builds/" + godName
+    site_html = requests.get(site_url + site_dir).text
+    soup = BeautifulSoup(site_html, "html.parser")
+
+    itemList = []
+    for item in soup.select(".primary-item img"):
+        itemList.append(item["alt"])
+    return itemList
 
 def pull_build_data(godName):
     site_url = "http://smite.guru"
@@ -85,27 +105,27 @@ def pull_build_data(godName):
     site_html = requests.get(site_url + site_dir).text
     soup = BeautifulSoup(site_html, "html.parser")
 
-    # itemList = []
-    # for item in soup.select(".primary-item img"):
-    #     itemList.append(item["alt"])
-    # return itemList
-
-    # for string in soup.find_all("span"):
-    #     print(soup.span.string)
-
     itemsAndPercentagesLists = []
     itemList = []
     percentageList = []
     spanList = soup.select("span")
-    for number in range(44, 58):
+    mark = 0
+    startingNum = 0
+    newList = []
+    splitStringLists = []
+    for item in spanList:
+        newList.append(split_by_char(item))
+    for thing in newList:
+        splitStringLists.append(split_by_char(thing[0]))
+    for thing1 in range(len(splitStringLists)):
+        for thing2 in splitStringLists[thing1]:
+            if thing2 == '%' and mark == 0:
+                mark += 1
+                startingNum = thing1
+    for number in range(startingNum+30, startingNum+44):
         percentageList.append(spanList[number].string)
-    print(percentageList)
-    print(len(percentageList))
-    #print(spanList[44].string)
     for item in soup.select(".item.item-row__img img"):
         itemList.append(item["alt"])
-    print(itemList)
-    print(len(itemList))
     itemsAndPercentagesLists.append(itemList)
     itemsAndPercentagesLists.append(percentageList)
     return itemsAndPercentagesLists
@@ -132,12 +152,6 @@ if __name__ == '__main__':
         if message.author == client.user:
             return
 
-        if message.content.startswith("$saymyname"):
-            await message.channel.send(message.author)
-
-        if message.content.startswith("dab"):
-            await message.channel.send(":Dab:")
-
         if message.content.startswith("$hello"):
             await message.channel.send("Hello friends")
 
@@ -146,31 +160,39 @@ if __name__ == '__main__':
             equation.pop(0)
             await message.channel.send(mathStuff(equation))
 
-        if message.content.startswith('$test'):
-            embedVar = discord.Embed(color=0x7fffd4)
-            #embedVar.set_thumbnail(url="https://static.smite.guru/i/champions/icons/eset.jpg")
-            embedVar.set_author(name="Eset", url="https://smite.guru/builds/eset", icon_url="https://static.smite.guru/i/champions/icons/eset.jpg")
-            # embedVar.set_image(url="https://static.scientificamerican.com/sciam/cache/file/41DF7DA0-EE58-4259-AA815A390FB37C55_source.jpg")
-            # embedVar.set_image(url="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png")
-            embedVar.add_field(name="Build", value="<:veryaveragedab:828016535708237875>", inline=True)
-            await message.channel.send(embed=embedVar)
-
-        if message.content.startswith("$build"):
+        if message.content.startswith("$items"):
             messageContent = message.content.split()
             messageContent.pop(0)
-            print(messageContent)
             if len(messageContent) > 1:
                 unformattedGodName = ""
                 for part in messageContent:
                     unformattedGodName = unformattedGodName + part + " "
-                unformattedGodName.strip()
-                print(unformattedGodName)
+                unformattedGodName = unformattedGodName.strip()
                 godName = godAbbreviations(unformattedGodName)
             else:
                 godName = godAbbreviations(messageContent[0])
-            print(godName)
-            itemList = pull_build_data(godName)[0]
-            percentageList = pull_build_data(godName)[1]
+            infoList = pull_build_data(godName)
+            itemList = infoList[0]
+            percentageList = infoList[1]
+            if itemList == []:
+                await message.channel.send("Not a god lol")
+            else:
+                guidedBuildEmbed = createGuidedBuildEmbed(godName, itemList, percentageList)
+                await message.channel.send(embed=guidedBuildEmbed)
+
+        if message.content.startswith("$cc"):
+            messageContent = message.content.split()
+            messageContent.pop(0)
+            if len(messageContent) > 1:
+                unformattedGodName = ""
+                for part in messageContent:
+                    unformattedGodName = unformattedGodName + part + " "
+                unformattedGodName = unformattedGodName.strip()
+                godName = godAbbreviations(unformattedGodName)
+            else:
+                godName = godAbbreviations(messageContent[0])
+            itemList = pull_build(godName)
+
             itemString = ""
             for item in itemList:
                 if item == itemList[0]:
@@ -180,11 +202,9 @@ if __name__ == '__main__':
             if itemString == "":
                 await message.channel.send("Not a god lol")
             else:
-                itemBuildEmbed = createGuidedBuildEmbed(godName, itemList, percentageList)
+                itemBuildEmbed = createItemBuildEmbed(godName, itemString)
                 await message.channel.send(embed=itemBuildEmbed)
 
-        if message.content.startswith("$ban"):
-            await message.channel.send("Priveledges have been revoked from Bean Bean #5753")
 
 #test
     client.run(token)

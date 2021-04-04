@@ -144,14 +144,9 @@ def godAbbreviations(godName):
         godName = "yemoja"
     elif godName == "zhong" or godName == "zhong kui":
         godName = "zhong-kui"
-
     return godName
 
-# if __name__ == '__main__':
-#
-#     name = "nu wa"
-#     fixedName = godAbbreviations(name)
-#     print(fixedName)
+
 
 
 
