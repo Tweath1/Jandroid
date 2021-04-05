@@ -2,6 +2,7 @@ import discord
 import requests
 from bs4 import BeautifulSoup
 from godFunctions import godAbbreviations
+import os
 
 with open('token.txt', 'r') as file:
     token = file.readline()
@@ -24,7 +25,7 @@ def createItemBuildEmbed(godName, itemString):
     embedVar = discord.Embed(color=0x7fffd4)
     embedVar.set_thumbnail(url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
     embedVar.set_author(name=prettyGodName, url="https://smite.guru/builds/{}".format(godName), icon_url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
-    embedVar.add_field(name="Here are the 6 most popular items for {}".format(godName), value=itemString, inline=True)
+    embedVar.add_field(name="Here are the 6 most popular items for {}".format(prettyGodName), value=itemString, inline=True)
     return embedVar
 
 
@@ -180,7 +181,7 @@ if __name__ == '__main__':
                 guidedBuildEmbed = createGuidedBuildEmbed(godName, itemList, percentageList)
                 await message.channel.send(embed=guidedBuildEmbed)
 
-        if message.content.startswith("$cc"):
+        if message.content.startswith("$build"):
             messageContent = message.content.split()
             messageContent.pop(0)
             if len(messageContent) > 1:
@@ -205,6 +206,4 @@ if __name__ == '__main__':
                 itemBuildEmbed = createItemBuildEmbed(godName, itemString)
                 await message.channel.send(embed=itemBuildEmbed)
 
-
-#test
     client.run(token)
