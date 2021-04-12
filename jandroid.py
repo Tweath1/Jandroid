@@ -4,18 +4,18 @@ from bs4 import BeautifulSoup
 from godFunctions import godAbbreviations
 import os
 
-with open('token.txt', 'r') as file:
+with open('token.txt', 'r') as file: #gets token from file that is not on github, but is on host server
     token = file.readline()
 
 
-def split_by_char(string):
-  charList = []
+def split_by_char(string): #this function splits a string up into a list of its elements. It will be deleted a little later after redesigning its
+  charList = []            #only use in the system
   for char in string:
     charList.append(char)
   return charList
 
 
-def createItemBuildEmbed(godName, itemString):
+def createItemBuildEmbed(godName, itemString): #this is a function to turn info from get_build into an embed that discord outputs
     prettyGodName = ""
     prettyGodNameList = godName.split("-")
     for index in range(len(prettyGodNameList)):
@@ -90,45 +90,53 @@ def mathStuff(equation):
     return finalValue
 
 def pull_build(godName):
+    itemList = []
     site_url = "http://smite.guru"
     site_dir = "/builds/" + godName
-    site_html = requests.get(site_url + site_dir).text
-    soup = BeautifulSoup(site_html, "html.parser")
+    site_response = requests.get(site_url + site_dir)
+    if site_response.status_code == 500:
+        pass
+    else:
+        site_html = requests.get(site_url + site_dir).text
+        soup = BeautifulSoup(site_html, "html.parser")
 
-    itemList = []
-    for item in soup.select(".primary-item img"):
-        itemList.append(item["alt"])
+        for item in soup.select(".primary-item img"):
+            itemList.append(item["alt"])
     return itemList
 
 def pull_build_data(godName):
+    itemsAndPercentagesLists = []
     site_url = "http://smite.guru"
     site_dir = "/builds/" + godName
-    site_html = requests.get(site_url + site_dir).text
-    soup = BeautifulSoup(site_html, "html.parser")
+    site_response = requests.get(site_url + site_dir)
+    if site_response.status_code == 500:
+        itemsAndPercentagesLists = [[],[]]
+    else:
+        site_html = requests.get(site_url + site_dir).text
+        soup = BeautifulSoup(site_html, "html.parser")
 
-    itemsAndPercentagesLists = []
-    itemList = []
-    percentageList = []
-    spanList = soup.select("span")
-    mark = 0
-    startingNum = 0
-    newList = []
-    splitStringLists = []
-    for item in spanList:
-        newList.append(split_by_char(item))
-    for thing in newList:
-        splitStringLists.append(split_by_char(thing[0]))
-    for thing1 in range(len(splitStringLists)):
-        for thing2 in splitStringLists[thing1]:
-            if thing2 == '%' and mark == 0:
-                mark += 1
-                startingNum = thing1
-    for number in range(startingNum+30, startingNum+44):
-        percentageList.append(spanList[number].string)
-    for item in soup.select(".item.item-row__img img"):
-        itemList.append(item["alt"])
-    itemsAndPercentagesLists.append(itemList)
-    itemsAndPercentagesLists.append(percentageList)
+        itemList = []
+        percentageList = []
+        spanList = soup.select("span")
+        mark = 0
+        startingNum = 0
+        newList = []
+        splitStringLists = []
+        for item in spanList:
+            newList.append(split_by_char(item))
+        for thing in newList:
+            splitStringLists.append(split_by_char(thing[0]))
+        for thing1 in range(len(splitStringLists)):
+            for thing2 in splitStringLists[thing1]:
+                if thing2 == '%' and mark == 0:
+                    mark += 1
+                    startingNum = thing1
+        for number in range(startingNum+30, startingNum+44):
+            percentageList.append(spanList[number].string)
+        for item in soup.select(".item.item-row__img img"):
+            itemList.append(item["alt"])
+        itemsAndPercentagesLists.append(itemList)
+        itemsAndPercentagesLists.append(percentageList)
     return itemsAndPercentagesLists
 
 
@@ -172,14 +180,17 @@ if __name__ == '__main__':
                 godName = godAbbreviations(unformattedGodName)
             else:
                 godName = godAbbreviations(messageContent[0])
+            print(godName)
             infoList = pull_build_data(godName)
             itemList = infoList[0]
             percentageList = infoList[1]
             if itemList == []:
                 await message.channel.send("Not a god lol")
+                print("Fail")
             else:
                 guidedBuildEmbed = createGuidedBuildEmbed(godName, itemList, percentageList)
                 await message.channel.send(embed=guidedBuildEmbed)
+                print("Pass")
 
         if message.content.startswith("$build"):
             messageContent = message.content.split()
@@ -192,6 +203,7 @@ if __name__ == '__main__':
                 godName = godAbbreviations(unformattedGodName)
             else:
                 godName = godAbbreviations(messageContent[0])
+            print(godName)
             itemList = pull_build(godName)
 
             itemString = ""
@@ -200,10 +212,12 @@ if __name__ == '__main__':
                     itemString = itemString + item
                 else:
                     itemString = itemString + ", " + item
-            if itemString == "":
+            if itemList == []:
                 await message.channel.send("Not a god lol")
+                print("Fail")
             else:
                 itemBuildEmbed = createItemBuildEmbed(godName, itemString)
                 await message.channel.send(embed=itemBuildEmbed)
+                print("Pass")
 
     client.run(token)
