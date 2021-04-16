@@ -131,10 +131,21 @@ def pull_build_data(godName):
                 if thing2 == '%' and mark == 0:
                     mark += 1
                     startingNum = thing1
-        for number in range(startingNum+30, startingNum+44):
-            percentageList.append(spanList[number].string)
+        if godName == "ratatoskr":
+            for number in range(startingNum+30, startingNum+43):
+                percentageList.append(spanList[number].string)
+        else:
+            for number in range(startingNum+30, startingNum+44):
+                percentageList.append(spanList[number].string)
         for item in soup.select(".item.item-row__img img"):
             itemList.append(item["alt"])
+        if godName == "ratatoskr":
+            itemList.insert(3, 'Thistlethorn Acorn')
+            itemList[4] = "Bristlebush Acorn"
+            itemList[5] = "Thickbark Acorn"
+            percentageList.insert(3, '~50%')
+            percentageList[4] = "~27%"
+            percentageList[5] = "~13%"
         itemsAndPercentagesLists.append(itemList)
         itemsAndPercentagesLists.append(percentageList)
     return itemsAndPercentagesLists
