@@ -172,6 +172,15 @@ if __name__ == '__main__':
         if message.author == client.user:
             return
 
+        if message.content.startswith("$tierlist"):
+            tierlistEmbed = discord.Embed(color=0x7fffd4)
+            tierlistEmbed.set_thumbnail(url="https://i.gyazo.com/3a842d3c9a7e1a6f3bc2b6588f0ca548.png")
+            #tierlistEmbed.set_author(name=prettyGodName, url="https://smite.guru/builds/{}".format(godName),
+            #                   icon_url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
+            #tierlistEmbed.add_field(name="Here are the 6 most popular items for {}".format(prettyGodName), value=itemString,
+            #                   inline=True)
+            await message.channel.send(embed=tierlistEmbed)
+
         if message.content.startswith("$hello"):
             await message.channel.send("Hello friends")
 
