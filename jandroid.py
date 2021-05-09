@@ -131,9 +131,12 @@ def pull_build_data(godName):
                 if thing2 == '%' and mark == 0:
                     mark += 1
                     startingNum = thing1
+        print(len(spanList))
         if godName == "ratatoskr":
             for number in range(startingNum+30, startingNum+43):
                 percentageList.append(spanList[number].string)
+        elif len(spanList) < 46:
+            percentageList.append("error")
         else:
             for number in range(startingNum+30, startingNum+44):
                 percentageList.append(spanList[number].string)
@@ -175,10 +178,6 @@ if __name__ == '__main__':
         if message.content.startswith("$tierlist"):
             tierlistEmbed = discord.Embed(color=0x7fffd4)
             tierlistEmbed.set_thumbnail(url="https://i.gyazo.com/3a842d3c9a7e1a6f3bc2b6588f0ca548.png")
-            #tierlistEmbed.set_author(name=prettyGodName, url="https://smite.guru/builds/{}".format(godName),
-            #                   icon_url="https://static.smite.guru/i/champions/icons/{}.jpg".format(godName))
-            #tierlistEmbed.add_field(name="Here are the 6 most popular items for {}".format(prettyGodName), value=itemString,
-            #                   inline=True)
             await message.channel.send(embed=tierlistEmbed)
 
         if message.content.startswith("$hello"):
@@ -207,6 +206,9 @@ if __name__ == '__main__':
             if itemList == []:
                 await message.channel.send("Not a god lol")
                 print("Fail")
+            elif percentageList[0] == "error":
+                await message.channel.send("Error: "+godName.capitalize()+" does not have a fully filled smite.guru page. Try the $build command and click the name of the god to use the page data directly.")
+                print("Error")
             else:
                 guidedBuildEmbed = createGuidedBuildEmbed(godName, itemList, percentageList)
                 await message.channel.send(embed=guidedBuildEmbed)
