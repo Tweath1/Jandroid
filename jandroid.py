@@ -242,7 +242,7 @@ if __name__ == '__main__':
                 else:
                     itemString = itemString + ", " + item
             if itemList == []:
-                await message.channel.send("Not a god lol")
+                await message.channel.send(embed=errorEmbed)
                 print("Fail")
             else:
                 itemBuildEmbed = createItemBuildEmbed(godName, itemString)
