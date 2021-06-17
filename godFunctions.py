@@ -98,6 +98,8 @@ def godAbbreviations(godName):
         godName = "medusa"
     elif godName == "merc":
         godName = "mercury"
+    elif godName == "morgan le fay" or godName == "morgan" or godName == "morgan fay" or godName == "morg":
+        godName = "morgan-le-fay"
     elif godName == "nezha" or godName == "ne zha":
         godName = "ne-zha"
     elif godName == "nem":

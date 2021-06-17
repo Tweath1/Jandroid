@@ -155,6 +155,13 @@ def pull_build_data(godName):
 
 
 if __name__ == '__main__':
+    errorEmbed = discord.Embed(color=0x7fffd4)
+    errorEmbed.set_thumbnail(url="https://www.freeiconspng.com/thumbs/error-icon/error-icon-32.png")
+    errorEmbed.set_author(name="Error", icon_url="https://www.freeiconspng.com/thumbs/error-icon/error-icon-32.png")
+    errorEmbed.add_field(name="You have encountered an error! It is likely for one of the following reasons:",
+                         value="- You misspelled the god name\n - The string you entered is not a god in Smite\n - The god is a new god that does not have data available yet", inline=True)
+
+
     print("hello world")
 
     client = discord.Client()
@@ -204,7 +211,7 @@ if __name__ == '__main__':
             itemList = infoList[0]
             percentageList = infoList[1]
             if itemList == []:
-                await message.channel.send("Not a god lol")
+                await message.channel.send(embed=errorEmbed)
                 print("Fail")
             elif percentageList[0] == "error":
                 await message.channel.send("Error: "+godName.capitalize()+" does not have a fully filled smite.guru page. Try the $build command and click the name of the god to use the page data directly.")
