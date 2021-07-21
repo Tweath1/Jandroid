@@ -38,13 +38,11 @@ def createGuidedBuildEmbed(godName, itemList, percentageList):
         prettyGodName = prettyGodName + item + " "
     embedVar = discord.Embed(color=0x7fffd4)
     starterList = [itemList[0], itemList[1], itemList[2]]
-    bootsList = [itemList[3], itemList[4], itemList[5]]
-    relicList = [itemList[6], itemList[7], itemList[8], itemList[9]]
-    coreItemsList = [itemList[10], itemList[11], itemList[12], itemList[13]]
+    relicList = [itemList[3], itemList[4], itemList[5], itemList[6]]
+    coreItemsList = [itemList[7], itemList[8], itemList[9], itemList[10]]
     starterPercentageList = [percentageList[0], percentageList[1], percentageList[2]]
-    bootsPercentageList = [percentageList[3], percentageList[4], percentageList[5]]
-    relicPercentageList = [percentageList[6], percentageList[7], percentageList[8], percentageList[9]]
-    coreItemsPercentageList = [percentageList[10], percentageList[11], percentageList[12], percentageList[13]]
+    relicPercentageList = [percentageList[3], percentageList[4], percentageList[5], percentageList[6]]
+    coreItemsPercentageList = [percentageList[7], percentageList[8], percentageList[9], percentageList[10]]
     for index in range(len(relicList) - 1, -1, -1):
         if relicList[index] == "Vision Shard":
             relicList.pop(index)
@@ -55,10 +53,6 @@ def createGuidedBuildEmbed(godName, itemList, percentageList):
     embedVar.add_field(name="Popular Blessings", value=starterList[0] + ": " + starterPercentageList[0] + "\n"
                        + starterList[1] + ": " + starterPercentageList[1] + "\n"
                        + starterList[2] + ": " + starterPercentageList[2],
-                       inline=True)
-    embedVar.add_field(name="Popular Boots", value=bootsList[0] + ": " + bootsPercentageList[0] + "\n"
-                       + bootsList[1] + ": " + bootsPercentageList[1] + "\n"
-                       + bootsList[2] + ": " + bootsPercentageList[2],
                        inline=True)
     embedVar.add_field(name="Popular Relics", value=relicList[0] + ": " + relicPercentageList[0] + "\n"
                        + relicList[1] + ": " + relicPercentageList[1] + "\n"
@@ -138,7 +132,7 @@ def pull_build_data(godName):
         elif len(spanList) < 46:
             percentageList.append("error")
         else:
-            for number in range(startingNum+30, startingNum+44):
+            for number in range(startingNum+30, startingNum+41):
                 percentageList.append(spanList[number].string)
         for item in soup.select(".item.item-row__img img"):
             itemList.append(item["alt"])
@@ -151,7 +145,9 @@ def pull_build_data(godName):
             percentageList[5] = "~13%"
         itemsAndPercentagesLists.append(itemList)
         itemsAndPercentagesLists.append(percentageList)
+        print(itemsAndPercentagesLists)
     return itemsAndPercentagesLists
+
 
 
 if __name__ == '__main__':
