@@ -125,7 +125,6 @@ def pull_build_data(godName):
                 if thing2 == '%' and mark == 0:
                     mark += 1
                     startingNum = thing1
-        print(len(spanList))
         if godName == "ratatoskr":
             for number in range(startingNum+30, startingNum+43):
                 percentageList.append(spanList[number].string)
@@ -145,7 +144,6 @@ def pull_build_data(godName):
             percentageList[5] = "~13%"
         itemsAndPercentagesLists.append(itemList)
         itemsAndPercentagesLists.append(percentageList)
-        print(itemsAndPercentagesLists)
     return itemsAndPercentagesLists
 
 
