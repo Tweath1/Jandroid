@@ -40,6 +40,8 @@ def godAbbreviations(godName):
         godName = "cernunnos"
     elif godName == "change" or godName == "chang'e":
         godName = "chang-e"
+    elif godName == "chary" or godName == "char":
+        godName = "Charybdis"
     elif godName == "chern" or godName == "cherno":
         godName = "chernobog"
     elif godName == "lulu":
